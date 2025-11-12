@@ -299,7 +299,8 @@ App.pluginRegistry = {'4xAKTrabTpTzahoLthkwPNUn': 'plugins/explore.js',
 	'webcola': 'plugins/webcola/webcola.js', 'rnd': 'plugins/random.js',
 	'page': 'plugins/page.js', 'gd': 'plugins/googledrive.js',
 	'tags': 'plugins/tags.js',
-	'codegen': 'plugins/codegen/main.js'
+	'codegen': 'plugins/codegen/main.js',
+	'refresh': 'plugins/refresh-button.js'
 };
 
 App.publicPlugin = [
@@ -319,7 +320,8 @@ App.publicPlugin = [
 	'webcola',
 //	'rnd', 'page', 'gd',
 	'tags',
-	'codegen'
+	'codegen',
+	'refresh'
 ];
 
 /**

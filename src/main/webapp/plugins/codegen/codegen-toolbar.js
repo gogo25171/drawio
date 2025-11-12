@@ -10,8 +10,8 @@ Draw.loadPlugin(function(ui) {
     
     // Variables globales pour le plugin
     var codePanel = null;
-    var currentLanguage = 'java';
-    var isCodePanelVisible = false;
+    var currentLanguage = 'java'; // Langue par défaut
+    var isCodePanelVisible = false; // État de la visibilité du panneau de code au démarrage
     
     // Charger les dépendances en utilisant eval pour simuler l'import des fichiers
     // En production, ces fichiers seraient chargés séparément
@@ -151,7 +151,10 @@ Draw.loadPlugin(function(ui) {
     // INCLUDE: code-generators.js
     // ============================================================================
     
-    // Générateur Java
+    /////////////////////
+    // Générateur Java //
+    /////////////////////
+
     function JavaGenerator() {
         this.name = 'Java';
     }
@@ -225,7 +228,10 @@ Draw.loadPlugin(function(ui) {
         return code;
     };
     
-    // Générateur Python
+    ///////////////////////
+    // Générateur Python //
+    ///////////////////////
+
     function PythonGenerator() {
         this.name = 'Python';
     }
@@ -291,7 +297,10 @@ Draw.loadPlugin(function(ui) {
         return code.trimEnd ? code.trimEnd() : code.replace(/\s+$/, '');
     };
     
-    // Générateur TypeScript
+    ///////////////////////////
+    // Générateur TypeScript //
+    ///////////////////////////
+
     function TypeScriptGenerator() {
         this.name = 'TypeScript';
     }
@@ -369,6 +378,9 @@ Draw.loadPlugin(function(ui) {
         return code;
     };
     
+    
+    
+    
     // CodeGenerator principal
     function CodeGenerator() {
         this.generators = {
@@ -401,6 +413,10 @@ Draw.loadPlugin(function(ui) {
         this.model = this.graph.getModel();
     }
     
+    ////////
+    // ?? //
+    ////////
+
     DiagramGenerator.prototype.generateFromCode = function(code, language) {
         console.log('Diagram Generator: Generating diagram from code...');
         
@@ -433,7 +449,11 @@ Draw.loadPlugin(function(ui) {
             default: return null;
         }
     };
-    
+
+    ////////
+    // ?? //
+    ////////
+
     DiagramGenerator.prototype.createDiagram = function(classes, relationships) {
         var self = this;
         var graph = this.graph;
@@ -478,7 +498,11 @@ Draw.loadPlugin(function(ui) {
         
         console.log('Diagram Generator: Diagram created successfully');
     };
-    
+
+    /////////////////////////////////////
+    // Créer une cellule de classe UML //
+    /////////////////////////////////////
+
     DiagramGenerator.prototype.createClassCell = function(classInfo, x, y, width, height, parent) {
         var graph = this.graph;
         var model = this.model;
@@ -503,7 +527,9 @@ Draw.loadPlugin(function(ui) {
         
         var currentY = 0;
         
+        ////////////////////////
         // Ajouter les attributs
+    
         if (classInfo.attributes && classInfo.attributes.length > 0) {
             classInfo.attributes.forEach(function(attr) {
                 var symbol = attr.visibility === 'public' ? '+' : 
@@ -521,7 +547,9 @@ Draw.loadPlugin(function(ui) {
             currentY += 8;
         }
         
+        ////////////////////////
         // Ajouter les méthodes
+        
         if (classInfo.methods && classInfo.methods.length > 0) {
             classInfo.methods.forEach(function(method) {
                 var symbol = method.visibility === 'public' ? '+' : 
@@ -539,7 +567,11 @@ Draw.loadPlugin(function(ui) {
         
         return classCell;
     };
-    
+
+    ///////////////////////////////////////////
+    // Créer une relation entre deux classes //
+    ///////////////////////////////////////////
+
     DiagramGenerator.prototype.createRelationship = function(sourceCell, targetCell, type, parent) {
         var graph = this.graph;
         var style = '';
@@ -580,9 +612,10 @@ Draw.loadPlugin(function(ui) {
     // include: code-parsers.js
     // ============================================================================
     
-    /**
-     * Parser Java
-     */
+    /////////////////
+    // Parser Java //
+    /////////////////
+    
     function JavaParser() {}
     
     JavaParser.prototype.parse = function(code) {
@@ -754,9 +787,10 @@ Draw.loadPlugin(function(ui) {
         return methods;
     };
     
-    /**
-     * Parser Python
-     */
+    ///////////////////
+    // Parser Python //
+    ///////////////////
+
     function PythonParser() {}
     
     PythonParser.prototype.parse = function(code) {
@@ -865,9 +899,10 @@ Draw.loadPlugin(function(ui) {
         return methods;
     };
     
-    /**
-     * Parser TypeScript
-     */
+    ///////////////////////
+    // Parser TypeScript //
+    ///////////////////////
+    
     function TypeScriptParser() {}
     
     TypeScriptParser.prototype.parse = function(code) {
@@ -982,37 +1017,54 @@ Draw.loadPlugin(function(ui) {
     // INCLUDE: ui-components.js
     // ============================================================================
     
+    // Panneau latéral pour le code
     function createCodePanel() {
         var container = document.createElement('div');
         container.id = 'codePanel';
         container.style.cssText = 'position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: #f8f9fa; border-left: 1px solid #ddd; transition: right 0.3s ease; z-index: 1000; display: flex; flex-direction: column;';
         
-        // En-tête
+        /////////////
+        // En-tête //
+        /////////////
+
+        // Créer de la div en-tête
         var header = document.createElement('div');
         header.style.cssText = 'padding: 10px; background: #007bff; color: white; display: flex; justify-content: space-between; align-items: center;';
-        
+
+        // Titre
         var title = document.createElement('h3');
         title.textContent = 'Code Generator';
         title.style.cssText = 'margin: 0; font-size: 16px;';
-        header.appendChild(title);
+        header.appendChild(title); // Ajouter le titre à l'en-tête
         
+        // Bouton de fermeture
         var closeBtn = document.createElement('button');
         closeBtn.innerHTML = '×';
         closeBtn.style.cssText = 'background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px;';
         closeBtn.onclick = toggleCodePanel;
-        header.appendChild(closeBtn);
+        header.appendChild(closeBtn); // Ajouter le bouton de fermeture à l'en-tête
         
-        container.appendChild(header);
+        container.appendChild(header); //// Ajouter l'en-tête au panneau
         
-        // Contrôles
+        ///////////////
+        // Contrôles //
+        ///////////////
+
+        // Création de la div des contrôles
         var controls = document.createElement('div');
-        controls.style.cssText = 'padding: 10px; border-bottom: 1px solid #ddd;';
+        controls.style.cssText = 'padding: 10px; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; gap: 10px;';
         
+        // Conteneur pour Language
+        var langContainer = document.createElement('div');
+        langContainer.style.cssText = 'display: flex; align-items: center;';
+        
+        // Texte Language
         var langLabel = document.createElement('label');
         langLabel.textContent = 'Language: ';
         langLabel.style.cssText = 'margin-right: 10px;';
-        controls.appendChild(langLabel);
+        langContainer.appendChild(langLabel);
         
+        // Sélecteur de langue
         var langSelect = document.createElement('select');
         langSelect.id = 'codegen-language-select';
         langSelect.style.cssText = 'padding: 5px; border: 1px solid #ccc; border-radius: 3px;';
@@ -1023,26 +1075,27 @@ Draw.loadPlugin(function(ui) {
             option.textContent = lang.charAt(0).toUpperCase() + lang.slice(1);
             if (lang === currentLanguage) option.selected = true;
             langSelect.appendChild(option);
-        });
+        }); // Options de langue
         
         langSelect.onchange = function() {
             currentLanguage = this.value;
             updateCodeDisplay();
         };
         
-        controls.appendChild(langSelect);
+        langContainer.appendChild(langSelect);
+        controls.appendChild(langContainer);
         
-        // Bouton Refresh
+        // Bouton Generate Code
         var genCode = document.createElement('button');
         genCode.textContent = 'Generate Code';
-        genCode.style.cssText = 'margin-left: 10px; padding: 5px 10px; background: #28a745; color: white; border: none; border-radius: 3px; cursor: pointer;';
+        genCode.style.cssText = 'padding: 8px 10px; background: #28a745; color: white; border: none; border-radius: 3px; cursor: pointer;';
         genCode.onclick = updateCodeDisplay; // Fonction qui est activée au clic
-        controls.appendChild(genCode);
+        controls.appendChild(genCode); // Ajouter le bouton au conteneur des contrôles
         
-        // Bouton Import Code
+        // Bouton Generate Diagram
         var genDiag = document.createElement('button');
         genDiag.textContent = 'Generate Diagram';
-        genDiag.style.cssText = 'margin-left: 10px; padding: 5px 10px; background: #ff8c00; color: white; border: none; border-radius: 3px; cursor: pointer;';
+        genDiag.style.cssText = 'padding: 8px 10px; background: #ff8c00; color: white; border: none; border-radius: 3px; cursor: pointer;';
         genDiag.onclick = function() {
             var textarea = document.getElementById('codeTextarea');
             if (textarea && textarea.value.trim()) {
@@ -1077,27 +1130,37 @@ Draw.loadPlugin(function(ui) {
                 }
             }
         };
-        controls.appendChild(genDiag);
+        controls.appendChild(genDiag); // Ajouter le bouton au conteneur des contrôles
         
-        container.appendChild(controls);
+        container.appendChild(controls); //// Ajouter les contrôles au panneau
         
-        // Zone de code
+        //////////////////
+        // Zone de code //
+        //////////////////
+
+        // Création du conteneur de code
         var codeContainer = document.createElement('div');
         codeContainer.style.cssText = 'flex: 1; padding: 10px; overflow: auto;';
         
+        // Création de la zone de texte pour le code
         var codeTextarea = document.createElement('textarea');
         codeTextarea.id = 'codeTextarea';
         codeTextarea.style.cssText = 'width: 100%; height: 100%; font-family: "Courier New", monospace; font-size: 12px; border: 1px solid #ccc; padding: 10px; resize: none; background: white;';
         codeTextarea.readOnly = false;
         codeTextarea.placeholder = 'Click "Refresh" to generate code from the current diagram...';
         
-        codeContainer.appendChild(codeTextarea);
-        container.appendChild(codeContainer);
+        codeContainer.appendChild(codeTextarea); /// Ajouter la zone de texte au conteneur de code
+
+        container.appendChild(codeContainer); //// Ajouter le conteneur de code au panneau
         
-        // Boutons d'action
+        //////////////////////
+        // Boutons d'action //
+        //////////////////////
+
         var actions = document.createElement('div');
         actions.style.cssText = 'padding: 10px; border-top: 1px solid #ddd; display: flex; gap: 10px;';
         
+        // Bouton Copier dans le presse-papiers
         var copyBtn = document.createElement('button');
         copyBtn.textContent = 'Copy to Clipboard';
         copyBtn.style.cssText = 'flex: 1; padding: 8px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;';
@@ -1109,19 +1172,20 @@ Draw.loadPlugin(function(ui) {
                 copyBtn.textContent = 'Copy to Clipboard';
             }, 2000);
         };
-        actions.appendChild(copyBtn);
+        actions.appendChild(copyBtn); // Ajouter le bouton au panneau des actions
         
+        // Bouton Sauvegarder dans un fichier
         var saveBtn = document.createElement('button');
         saveBtn.textContent = 'Save as File';
         saveBtn.style.cssText = 'flex: 1; padding: 8px; background: #28a745; color: white; border: none; border-radius: 3px; cursor: pointer;';
         saveBtn.onclick = saveCodeToFile;
-        actions.appendChild(saveBtn);
+        actions.appendChild(saveBtn); // Ajouter le bouton au panneau des actions
+
+        container.appendChild(actions); /// Ajouter les actions au panneau
         
-        container.appendChild(actions);
+        document.body.appendChild(container); //// Ajouter le panneau au corps du document
         
-        document.body.appendChild(container);
-        
-        return container;
+        return container; ////// Retourner le panneau créé
     }
     
     function toggleCodePanel() {
@@ -1133,7 +1197,8 @@ Draw.loadPlugin(function(ui) {
             }
         }
     }
-    
+
+    // Met à jour l'affichage du code dans le panneau
     function updateCodeDisplay() {
         try {
             console.log('Code Generator: Updating code display...');
@@ -1158,6 +1223,7 @@ Draw.loadPlugin(function(ui) {
         }
     }
     
+    // Sauvegarde le code dans un fichier
     function saveCodeToFile() {
         var textarea = document.getElementById('codeTextarea');
         if (!textarea || !textarea.value) return;
@@ -1188,30 +1254,33 @@ Draw.loadPlugin(function(ui) {
     // Ajouter l'action au système d'actions de Draw.io
     ui.actions.addAction('codeGenerator', toggleCodePanel);
     
-    // Ajouter un bouton à la barre d'outils
+    // Ajouter un bouton pour ouvrir le panneau de code dans la barre d'outils
     if (ui.toolbar != null) {
         // Créer un élément de bouton personnalisé
         var elt = ui.toolbar.addSeparator();
         
+        // Créer le bouton
         var button = mxUtils.button('⚡', function(evt) {
             toggleCodePanel();
         });
         
+        // Configurer le style du bouton
         button.setAttribute('title', 'Code Generator');
         button.style.cssText = 'display:inline-block;padding:4px 8px;font-size:18px;cursor:pointer;background:#007bff;color:white;border:none;border-radius:3px;margin:2px;';
         
+        // Ajouter le bouton à la barre d'outils
         ui.toolbar.container.appendChild(button);
     }
     
-    // Ajouter au menu Extras
-    var extrasMenu = ui.menus.get('extras');
-    if (extrasMenu != null) {
-        var oldFunct = extrasMenu.funct;
-        extrasMenu.funct = function(menu, parent) {
-            oldFunct.apply(this, arguments);
-            ui.menus.addMenuItems(menu, ['-', 'codeGenerator'], parent);
-        };
-    }
+    // // Ajouter au menu Extras / Suppléments (TODO : Voir si c'est bien de le ici en plus)
+    // var extrasMenu = ui.menus.get('extras');
+    // if (extrasMenu != null) {
+    //     var oldFunct = extrasMenu.funct;
+    //     extrasMenu.funct = function(menu, parent) {
+    //         oldFunct.apply(this, arguments);
+    //         ui.menus.addMenuItems(menu, ['-', 'codeGenerator'], parent);
+    //     };
+    // }
     
     console.log('Code Generator Plugin: Loaded successfully!');
 });
