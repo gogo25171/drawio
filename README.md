@@ -1,11 +1,22 @@
-About
------
+# About
+
+## Table des matières
+
+- [About](#about)
+  - [Table des matières](#table-des-matières)
+  - [License](#license)
+  - [PRs and use of gen AI](#prs-and-use-of-gen-ai)
+  - [Scope of the Project](#scope-of-the-project)
+  - [Running](#running)
+  - [Supported Browsers](#supported-browsers)
+  - [Logo and trademark usage](#logo-and-trademark-usage)
+  - [TODO](#todo)
+
 draw.io, this project, is a configurable diagramming/whiteboarding visualization application. draw.io is jointly owned and developed by draw.io Ltd and draw.io AG.
 
-As well as running this project, we run a production-grade deployment of the diagramming interface at https://app.diagrams.net.
+As well as running this project, we run a production-grade deployment of the diagramming interface at <https://app.diagrams.net>.
 
-License
------------------
+## License
 
 The minified code authored by us in this repo is licensed under an Apache v2 license, but not all the sources to build those files are in this repo. This is not an open source project. We do not accept PRs.
 
@@ -15,13 +26,11 @@ Additional minified JavaScript files and Java libraries are used in this project
 
 We make no copyright claim on the content you create with this software, regardless of the copyright of individual icons used in such content.
 
-PRs and use of gen AI
----------------------
+## PRs and use of gen AI
 
 This entire project is written by humans only and written by the core team only. There have been various reasons for this historically, but the key reason from 2024 is that we have no way to determine whether PRs are also human written.
 
-Scope of the Project
---------------------
+## Scope of the Project
 
 draw.io is a diagramming or whiteboarding application, depending on which theme is selected. It is not an SVG editing app, the SVG export is designed only for embedding in web pages, not for further editing in other tools.
 
@@ -31,8 +40,7 @@ Note, in particular, we don't have support for collaborative editing in this pro
 
 If you are using a draw.io project/product and have issues or questions about the editor itself, the issue tracker and discussion in this GitHub project are likely a good place to look.
 
-Running
--------
+## Running
 
 One way to run draw.io is to fork this project, [publish the master branch to GitHub pages](https://help.github.com/categories/github-pages-basics/) and the [pages sites](https://jgraph.github.io/drawio/src/main/webapp/index.html) will have the full editor functionality (sans the integrations).
 
@@ -40,13 +48,11 @@ Another way is to use [the recommended Docker project](https://github.com/jgraph
 
 The full packaged .war of the client and servlets is built when the project is tagged and available on the [releases page](https://github.com/jgraph/draw.io/releases).
 
-Supported Browsers
-------------------
+## Supported Browsers
 
 draw.io supports Chrome 123+, Firefox 120+, Safari 17.5+, Opera 109+, WebView Android 137+, Safari iOS 18.5+ and Edge 123+.
 
-Logo and trademark usage
-------------------------
+## Logo and trademark usage
 
 draw.io is a registered EU trademark, #018062448
 
@@ -56,4 +62,9 @@ Do not use any draw.io logo as the icon or logo for your business/organization, 
 
 Do not modify the permitted draw.io logos, including changing the color, dimensions, or combining with other words or design elements.
 
-Do not use JGraph trademarks or logos without JGraph’s prior written permission.
+Do not use JGraph trademarks or logos without JGraph's prior written permission.
+
+## TODO
+
+- [ ] Faire un système ou l'on a mettre l'adresse d'un projet git et qui installe automatiquement le plugin depuis ce dépôt.
+- [ ] Ajouter un système de marketplace pour les plugins (un peut comme HomeBrew).

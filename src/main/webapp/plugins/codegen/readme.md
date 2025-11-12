@@ -413,21 +413,8 @@ Ce projet est sous licence Apache 2.0 - voir le fichier LICENSE pour plus de dé
 
 ## 👥 Auteurs
 
-- **Draw.io Team** - Équipe principale Draw.io
-- **Community Contributors** - Contributeurs de la communauté
-
-## 🙏 Remerciements
-
-- L'équipe Draw.io pour l'excellent éditeur de diagrammes
-- La communauté open source pour les retours et suggestions
-- Tous les contributeurs qui ont participé à ce projet
-
-## 📞 Support
-
-- 📧 Email: <support@draw.io>
-- 🐛 Issues: [GitHub Issues](https://github.com/jgraph/drawio-desktop/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/jgraph/drawio-desktop/discussions)
-- 📖 Documentation: [Draw.io Documentation](https://www.diagrams.net/doc/)
+- **Draw.io Team** - Équipe principale Draw.io qui a fait la base
+- **Gauthier Clément** - Développeur principal du plugin Code Generator
 
 ---
 
@@ -435,10 +422,8 @@ Ce projet est sous licence Apache 2.0 - voir le fichier LICENSE pour plus de dé
 
 - [ ] Mettre a jour le README avec le code actuel
 
-- [ ] Ajout options de générer le diagramme a partir du code
-
-- [ ] Faire fonctionner la génération de diagramme depuis le code
+- [ ] Voir si j'ai tout les fonctionnalités d'ici pour le java : <https://www.datacamp.com/fr/doc/java/enums>
 
 - [ ] Splitter le code en plusieurs fichiers
 - [ ] Ajouter d'autre langages de programmation (C#, C++, Ruby)
-- [ ] Améliorer l'interface utilisateur
+- [ ] Améliorer l'interface utilisateur (UI/UX, etc...)

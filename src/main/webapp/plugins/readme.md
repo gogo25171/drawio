@@ -8,7 +8,7 @@
   - [Création de plugins et installation](#création-de-plugins-et-installation)
   - [Liste des plugins disponibles](#liste-des-plugins-disponibles)
     - [texte.js](#textejs)
-    - [???](#)
+    - [codegen](#codegen)
   - [TODO](#todo)
 
 ## Description
@@ -19,13 +19,11 @@ Les plugins sont des modules complémentaires qui étendent les fonctionnalités
 
 Pour ajouter un plugin, placez-le dans le répertoire `plugins/` et ajoutez-le à la liste des plugins dans `js/diagramly/App.js`.
 
-TODO : 
-
 ## Liste des plugins disponibles
 
 ### texte.js
 
-### ???
+### codegen
 
 ## TODO
 
