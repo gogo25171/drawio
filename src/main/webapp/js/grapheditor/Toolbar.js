@@ -58,16 +58,18 @@ Toolbar.prototype.init = function()
 
 	var insertMenu = this.addMenu(this.editorUi.menus.get('insert'), null, Editor.plusImage);
 	insertMenu.setAttribute('data-min-width', 300);
-
 	var shapesElt = insertMenu.cloneNode(true);
 	shapesElt.setAttribute('data-min-width', 330);
 	shapesElt.style.backgroundImage = 'url(' + Editor.shapesImage + ')';
 	this.editorUi.addShapePicker(shapesElt, true);
 	this.container.appendChild(shapesElt);
-
 	var tableMenu = this.addTableDropDown();
 	tableMenu.setAttribute('data-min-width', 360);
+	this.addSeparator(null, 360);
 
+	this.addItems(['insertFreehand', 'generate'], null, null,
+		[Editor.freehandImage, Editor.sparklesImage], 420);
+	
 	this.editorUi.dependsOnLanguage(mxUtils.bind(this, function()
 	{
 		if (this.edgeShapeMenu != null)
@@ -601,11 +603,15 @@ Toolbar.prototype.addItems = function(keys, c, ignoreDisabled, icons, minWidth)
 		{
 			var elt = this.addItem((icons != null) ?
 				icons[i] : null, key, c, ignoreDisabled);
-			items.push(elt);
 
-			if (minWidth != null)
+			if (elt != null)
 			{
-				elt.setAttribute('data-min-width', minWidth);
+				items.push(elt);
+
+				if (minWidth != null)
+				{
+					elt.setAttribute('data-min-width', minWidth);
+				}
 			}
 		}
 	}

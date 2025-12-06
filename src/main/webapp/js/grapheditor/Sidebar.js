@@ -630,8 +630,8 @@ Sidebar.prototype.createTooltip = function(elt, cells, w, h, title, showLabel, o
 	// Workaround for ignored position CSS style in IE9
 	// (changes to relative without the following line)
 	this.tooltip.style.position = 'absolute';
-	this.tooltip.style.left = left + 'px';
-	this.tooltip.style.top = top + 'px';
+	this.tooltip.style.left = Math.max(0, left) + 'px';
+	this.tooltip.style.top = Math.max(0, top) + 'px';
 	
 	mxUtils.fit(this.tooltip, this.tooltipBorder);
 	this.lastCreated = Date.now();
@@ -1252,17 +1252,15 @@ Sidebar.prototype.addSearchPalette = function(expand)
 			!editorUi.isOffline() &&
 			editorUi.isOwnGDriveDomain() &&
 			editorUi.isExternalDataComms() &&
-			editorUi.getServiceName() == 'draw.io')
+			editorUi.getServiceName() == 'draw.io' &&
+			typeof mxMermaidToDrawio !== 'undefined' &&
+			window.isMermaidEnabled)
 		{
-			if (typeof mxMermaidToDrawio !== 'undefined' &&
-				window.isMermaidEnabled)
+			menu.addItem(mxResources.get('generate'), null, mxUtils.bind(this, function()
 			{
-				menu.addItem(mxResources.get('generate'), null, mxUtils.bind(this, function()
-				{
-					editorUi.openTemplateDialog(encodeURIComponent(input.value));
-					input.value = '';
-				}), parent);
-			}
+				editorUi.openGenerateDialog(input.value);
+				input.value = '';
+			}), parent);
 		}
 
 		if (!editorUi.isOffline() &&
@@ -2755,16 +2753,21 @@ Sidebar.prototype.createSection = function(title)
  */
 Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, width, height,
 	allowCellsInserted, showTooltip, clickFn, thumbWidth, thumbHeight, icon, startEditing,
-	sourceCell)
+	sourceCell, useElt)
 {
 	showTooltip = (showTooltip != null) ? showTooltip : true;
 	thumbWidth = (thumbWidth != null) ? thumbWidth : this.thumbWidth;
 	thumbHeight = (thumbHeight != null) ? thumbHeight : this.thumbHeight;
-	
-	var elt = document.createElement('a');
-	var border = 2 * this.thumbBorder;
-	elt.style.width = (thumbWidth + border) + 'px';
-	elt.style.height = (thumbHeight + border) + 'px';
+
+	var elt = useElt;
+
+	if (elt == null)
+	{
+		elt = document.createElement('a');
+		var border = 2 * this.thumbBorder;
+		elt.style.width = (thumbWidth + border) + 'px';
+		elt.style.height = (thumbHeight + border) + 'px';
+	}
 	
 	// Blocks default click action
 	mxEvent.addListener(elt, 'click', function(evt)
@@ -2790,7 +2793,7 @@ Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, widt
 			elt.style.backgroundPosition = 'center';
 			elt.style.backgroundSize = '24px 24px';
 		}
-		else
+		else if (useElt == null)
 		{
 			elt.className = 'geItem';
 			this.createThumb(originalCells, thumbWidth, thumbHeight,
@@ -2830,7 +2833,7 @@ Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, widt
 			}));
 		}
 	}
-	else
+	else if (useElt == null)
 	{
 		elt.style.backgroundImage = 'url(' + Editor.svgBrokenImage.src + ')';
 		elt.setAttribute('title', title);

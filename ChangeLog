@@ -1,3 +1,45 @@
+01-DEC-2025: 29.2.2
+
+- AI and licensing tuning
+
+27-NOV-2025: 29.2.1
+
+- Fixes possible NPE
+
+27-NOV-2025: 29.2.0
+
+- Enhances pagecount and pagenumber placeholders [jgraph/drawio#3378]
+- Adds support for CSV in create hash property [jgraph/drawio#5273]
+- Replaces smart template section with generate window
+
+21-NOV-2025: 29.1.1
+
+- [conf connect] License tuning
+
+19-NOV-2025: 29.1.0
+
+- Makes attribute encoding deterministic [jgraph/drawio#1556]
+
+15-NOV-2025: 29.0.3
+
+- Math base path and CSP corrections
+
+13-NOV-2025: 29.0.2
+
+- Fixes math PDF export
+
+13-NOV-2025: 29.0.1
+
+- Updates mermaid to 11.12.1
+- Fixes math print output
+
+12-NOV-2025: 29.0.0
+
+- Updates to Mathjax 4.0.0
+- Fixes edge labels in Mermaid flowcharts [DID-16838]
+- Removes unused files for MathJax [mathjax/MathJax#3436]
+- Cisco stencil updates
+
 03-NOV-2025: 28.2.9
 
 - Updates DOMPurify from 3.2.5 to 3.3.0

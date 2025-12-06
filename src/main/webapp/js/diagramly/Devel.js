@@ -11,50 +11,21 @@ if (!mxIsElectron)
 	(function()
 	{
 		var hashes = 'default-src \'self\'; ' +
-			'script-src %script-src% \'self\' https://viewer.diagrams.net https://apis.google.com https://*.pusher.com ' +
-			// Below are the SHAs of the two script blocks in index.html.
-			// These must be updated here and in the CDN after changes.
-			// Note: Desktop app uses only the newest hashes (replace it in electron.js [The one in index.html needs to be changed only if the second script block changes])
-			//----------------------------------------------------------//
-			//------------- Bootstrap script in index.html -------------//
-			//----------------------------------------------------------//
-			// Version 24.4.4
-			'\'sha256-f6cHSTUnCvbQqwa6rKcbWIpgN9dLl0ROfpEKTQUQPr8=\' ' +
-			//---------------------------------------------------------//
-			//------------- App.main script in index.html -------------//
-			//---------------------------------------------------------//
-			// Version 13.8.2
-			'\'sha256-vS/MxlVD7nbY7AnV+0t1Ap338uF7vrcs7y23KjERhKc=\' ' +
-			//---------------------------------------------------------//
-			'; ';
+			'script-src %script-src% \'self\' https://viewer.diagrams.net https://apis.google.com https://*.pusher.com; ';
 
-		var styleHashes = '\'sha256-pVoUz0B9cDvBP/6KP+5uOMqPh1c14hF0KFqSELqeyNQ=\' ' + // index.html
-			'\'sha256-D9Gy46rimBnLRtBqv9U464kXQ5oT5JvkurboVMjtN0Q=\' ' + // MinimalCss/Light
-			'\'sha256-C9BzsAi3ukZpBZzbdTpUNpxHfPR/+KJbeueKj1U6QGY=\' ' + // MinimalCss/Dark
-			'\'sha256-7kY8ozVqKLIIBwZ24dhdmZkM26PsOlZmEi72RhmZKoM=\' ' + // mxTooltipHandler.js
-			'\'sha256-kuk5TvxZ/Kwuobo4g6uasb1xRQwr1+nfa1A3YGePO7U=\' ' + // MathJax
-			'\'sha256-ByOXYIXIkfNC3flUR/HoxR4Ak0pjOEF1q8XmtuIa6po=\' ' + // purify.min.js
-			'\'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=\' ' + // spin.min.js
-			'\'sha256-nzHi23DROym7G011m6y0DyDd9mvQL2hSJ0Gy3g2T/5Q=\' ' + // dropins.js
-			'\'sha256-xjAW8oXqJlP0CWqxT9s80kgOtOjvENMmfnnfulL6p1A=\' ' + // gapi
-			'\'unsafe-hashes\'; '; // Required for hashes for style attribute
-		
 		var directives = 'connect-src %connect-src% \'self\' https://*.draw.io https://*.diagrams.net ' +
 			'https://*.googleapis.com wss://app.diagrams.net wss://*.pusher.com https://*.pusher.com ' +
 			'https://api.github.com https://raw.githubusercontent.com https://gitlab.com ' +
 			'https://graph.microsoft.com https://my.microsoftpersonalcontent.com https://*.sharepoint.com https://*.sharepoint.de  ' +
 			'https://*.1drv.com https://api.onedrive.com https://dl.dropboxusercontent.com https://api.openai.com ' +
 			'https://*.google.com https://fonts.gstatic.com https://fonts.googleapis.com; ' +
-			// font-src about: is required for MathJax HTML-CSS output with STIX
-			'img-src * data: blob:; media-src * data:; font-src * data: about:; ' +
+			'img-src * data: blob:; media-src * data:; font-src * data:; ' +
 			// www.draw.io required for browser data migration to app.diagrams.net and
 			// viewer.diagrams.net required for iframe embed preview
 			'frame-src %frame-src% \'self\' https://viewer.diagrams.net https://www.draw.io https://*.google.com; ' +
-			'style-src %style-src% \'self\' https://fonts.googleapis.com ' +
-			// Replaces unsafe-inline style-src with hashes with safe-style-src URL parameter
-			((urlParams['safe-style-src'] == '1') ? styleHashes : '\'unsafe-inline\'; ') +
-			'base-uri \'none\';' +
-			'child-src \'self\';' +
+			'style-src %style-src% \'self\' https://fonts.googleapis.com \'unsafe-inline\'; ' +
+			'base-uri \'none\'; ' +
+			'child-src \'self\'; ' +
 			'object-src \'none\';';
 			
 		var csp = hashes + directives;
@@ -84,10 +55,10 @@ if (!mxIsElectron)
 				'connect-src *; ' +
 				'img-src * data: blob:; ' +
 				'media-src * data:; ' +
-				'font-src * data: about:; ' +
+				'font-src * data:; ' +
 				'style-src \'self\' https://fonts.googleapis.com \'unsafe-inline\'; ' +
-				'base-uri \'none\';' +
-				'object-src \'none\';' +
+				'base-uri \'none\'; ' +
+				'object-src \'none\'; ' +
 				'worker-src https://viewer.diagrams.net/service-worker.js;'
 			console.log('viewer.diagrams.net:', viewer_diagrams_net);
 

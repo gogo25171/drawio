@@ -752,9 +752,18 @@ mxPrintPreview.prototype.writeHead = function(doc, css)
 		doc.writeln('<title>' + mxUtils.htmlEntities(this.title) + '</title>');
 	}
 	
-	// Adds all required stylesheets
-	mxClient.link('stylesheet', mxClient.basePath + '/css/common.css', doc);
-	
+	// Adds all required stylesheets and strips dev mode src path if needed
+	// This is a workaround for side-effects in dev mode where src is added
+	// to the basePath for loading all JS files from the src directory
+	var path = mxClient.basePath;
+
+	if (path.substring(path.length - 4) == '/src')
+	{
+		path = path.substring(0, path.length - 4);
+	}
+
+	mxClient.link('stylesheet', path + '/css/common.css', doc);
+
 	// Removes horizontal rules and page selector from print output
 	doc.writeln('<style type="text/css">');
 	doc.writeln(this.defaultCss);

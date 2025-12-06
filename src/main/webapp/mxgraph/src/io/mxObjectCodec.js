@@ -437,6 +437,7 @@ mxObjectCodec.prototype.encode = function(enc, obj)
 mxObjectCodec.prototype.encodeObject = function(enc, obj, node)
 {
 	enc.setAttribute(node, 'id', enc.getId(obj));
+	var attrs = [];
 	
     for (var i in obj)
     {
@@ -447,12 +448,36 @@ mxObjectCodec.prototype.encodeObject = function(enc, obj, node)
     	{
     		if (mxUtils.isInteger(name))
     		{
-    			name = null;
-    		}
-    		
-    		this.encodeValue(enc, obj, name, value, node);
+				this.encodeValue(enc, obj, null, value, node);
+			}
+			else
+			{
+				attrs.push({name: name, value: value});
+			}
     	}
     }
+
+	// Sorts by name
+	attrs.sort(function(a, b)
+	{
+		if (a.name < b.name)
+		{
+			return -1;
+		}
+		else if (a.name > b.name)
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	});
+
+	for (var i = 0; i < attrs.length; i++)
+	{
+		this.encodeValue(enc, obj, attrs[i].name, attrs[i].value, node);
+	}
 };
 
 /**

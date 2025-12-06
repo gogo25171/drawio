@@ -3365,12 +3365,6 @@ App.prototype.start = function()
 							null, null, null, null, null, true);
 						Editor.useLocalStorage = prev;
 					}
-					else if (urlParams['smart-template'] != null)
-					{
-						this.createFile(this.defaultFilename, null,
-							null, null, null, null, null, true);
-						this.actions.get('insertTemplate').funct();
-					}
 					else
 					{
 						var waiting = false;
@@ -3442,6 +3436,14 @@ App.prototype.start = function()
 			if (window.location.hash != null && window.location.hash.substring(0, 8) == '#create=')
 			{
 				value = decodeURIComponent(window.location.hash.substring(8));
+			}
+			
+			if (urlParams['smart-template'] != null && (window.location.hash == null ||
+				window.location.hash.length <= 1))
+			{
+				value = JSON.stringify({
+					type: 'generate', data: decodeURIComponent(urlParams['smart-template'])
+				});
 			}
 			
 			if ((window.location.hash == null || window.location.hash.length <= 1 ||
@@ -3528,11 +3530,12 @@ App.prototype.start = function()
 						this.spinner.stop();
 						value = JSON.parse(value);
 						
-						var createDiagram = mxUtils.bind(this, function(data)
+						var createDiagram = mxUtils.bind(this, function(xml)
 						{
-							this.createFile((data.filename != null) ?
-								data.filename : this.defaultFilename,
-								data, null, null, mxUtils.bind(this, function()
+							this.spinner.stop();
+							this.createFile((value.filename != null) ?
+								value.filename : this.defaultFilename,
+								xml, null, null, mxUtils.bind(this, function()
 								{
 									if (!this.editor.chromeless || this.editor.editable)
 									{
@@ -3542,7 +3545,7 @@ App.prototype.start = function()
 									window.history.replaceState(null, null,
 										window.location.pathname +
 										this.getSearch(['create']));
-									window.location.hash = 'R' + Graph.compress(data);
+									window.location.hash = 'R' + Graph.compress(xml);
 								}), true, null, true);
 						});
 
@@ -3552,35 +3555,19 @@ App.prototype.start = function()
 						{
 							data = Graph.decompress(data);
 						}
-						
-						if (value.type == 'mermaid')
+
+						if (value.type == 'mermaid' && this.spinner.spin(
+							document.body, mxResources.get('loading')))
 						{
 							if (window.isMermaidEnabled)
 							{
-								mxMermaidToDrawio.addListener(mxUtils.bind(this, function(data)
+								this.parseMermaidDiagram(data, null, mxUtils.bind(this, function(xml)
 								{
-									if (data != this.emptyDiagramXml)
-									{
-										createDiagram(data);
-									}
-								}));
-
-								this.generateMermaidImage(data, null, function()
+									createDiagram(xml);
+								}), mxUtils.bind(this, function(e)
 								{
-									// callback implemented above
-								}, mxUtils.bind(this, function(e)
-								{
-									// Removes div in document with an ID that starts with dgeMermaidOutput
-									var divs = document.querySelectorAll('div[id^="dgeMermaidOutput"]');
-									
-									for (var i = 0; i < divs.length; i++)
-									{
-										divs[i].parentNode.removeChild(divs[i]);
-									}
-
-									mxMermaidToDrawio.resetListeners();
 									this.handleError(e);
-								}));
+								}), null, true);
 							}
 							else
 							{
@@ -3593,14 +3580,30 @@ App.prototype.start = function()
 							document.body, mxResources.get('generate') +
 							' \''+ data + '\''))
 						{
-							this.generateDiagram(data, mxUtils.bind(this, function(xml)
+							this.generateOpenAiMermaidDiagram(data, function(xml)
 							{
-								this.spinner.stop();
 								createDiagram(xml);
-							}), mxUtils.bind(this, function(e)
+							}, mxUtils.bind(this, function(e)
 							{
 								this.handleError(e, mxResources.get('errorLoadingFile'));
-							}));
+							}), true, {complexity: 'high'});
+						}
+						else if (value.type == 'csv')
+						{
+							var graph = this.createTemporaryGraph(this.editor.graph.getStylesheet());
+							
+							this.importCsv(data, mxUtils.bind(this, function()
+							{
+								var codec = new mxCodec();
+								createDiagram(mxUtils.getXml(
+									codec.encode(graph.getModel())));
+							}), graph);
+						}
+						else
+						{
+							this.handleError(
+								{message: mxResources.get('invalidCallFnNotFound', [value.type])},
+								mxResources.get('errorLoadingFile'));
 						}
 					}
 					else
@@ -3699,6 +3702,36 @@ App.prototype.start = function()
 };
 
 /**
+ * 
+ */
+App.prototype.openGenerateDialog = function(prompt)
+{
+	if (this.chatWindow == null)
+	{
+		this.chatWindow = new ChatWindow(this, 224, 104, 280, 320);
+		this.chatWindow.window.addListener('show', mxUtils.bind(this, function()
+		{
+			this.fireEvent(new mxEventObject('chat'));
+		}));
+		this.chatWindow.window.addListener('hide', function()
+		{
+			this.fireEvent(new mxEventObject('chat'));
+		});
+		this.chatWindow.window.setVisible(true);
+		this.fireEvent(new mxEventObject('chat'));
+	}
+	else
+	{
+		this.chatWindow.window.setVisible(true);
+	}
+
+	if (prompt != null)
+	{
+		this.chatWindow.generate(prompt);
+	}
+};
+
+/**
  * Generate a diagram for the given description.
  */
 App.prototype.openTemplateDialog = function(generatePrompt)
@@ -3730,42 +3763,6 @@ App.prototype.openTemplateDialog = function(generatePrompt)
 		
 		dlg.init();
 	}
-};
-
-/**
- * Generate a diagram for the given description.
- */
-App.prototype.generateDiagram = function(desc, success, error)
-{
-	var listenerTriggered = false;
-	var xmlResult = null;
-
-	var prompt = 'Write a detailed and complex MermaidJS declaration for ' +
-		'"' + (desc != '' ? desc : 'something random') + '" ' +
-		'using correct MermaidJS syntax and do not ' +
-		'provide additional text in your response.';
-	
-	if (typeof mxMermaidToDrawio !== 'undefined')
-	{
-		mxMermaidToDrawio.addListener(mxUtils.bind(this, function(modelXml)
-		{
-			if (modelXml != this.emptyDiagramXml)
-			{
-				listenerTriggered = true;
-				xmlResult = modelXml;
-			}
-		}));
-	}
-
-	this.generateOpenAiMermaidDiagram(prompt,
-		function(mermaidData, imageData, w, h)
-		{
-			xmlResult = (listenerTriggered) ? xmlResult :
-				this.createMermaidXml(mermaidData,
-					EditorUi.defaultMermaidConfig,
-					imageData, w, h, desc);
-			success(xmlResult, imageData);
-		}, error);
 };
 
 /**

@@ -4,7 +4,7 @@
  */
 window.PLUGINS_BASE_PATH = '.';
 window.TEMPLATE_PATH = 'templates';
-window.DRAW_MATH_URL = 'math/es5';
+window.DRAW_MATH_URL = 'math4/es5';
 window.DRAWIO_BASE_URL = '.'; //Prevent access to online website since it is not allowed
 window.DRAWIO_SERVER_URL = '.';
 EditorUi.draftSaveDelay = 5000;
@@ -215,7 +215,8 @@ mxStencilRegistry.allowEval = false;
 			break;
 		}
 
-		mxmeta(null, 'default-src \'self\'; connect-src \'self\' https://fonts.googleapis.com https://fonts.gstatic.com; img-src * data:; media-src *; font-src *; style-src \'self\' \'unsafe-inline\' https://fonts.googleapis.com', 'Content-Security-Policy');
+		mxmeta(null, 'default-src \'self\'; connect-src \'self\' https://fonts.googleapis.com https://fonts.gstatic.com; img-src * data:; ' +
+			'media-src *; font-src * data:; style-src \'self\' \'unsafe-inline\' https://fonts.googleapis.com', 'Content-Security-Policy');
 
 		//Disable web plugins loading
 		urlParams['plugins'] = '0';

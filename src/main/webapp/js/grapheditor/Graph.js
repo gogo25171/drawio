@@ -3087,7 +3087,7 @@ Graph.prototype.connectionArrowsEnabled = true;
 /**
  * Specifies the regular expression for matching placeholders.
  */
-Graph.prototype.placeholderPattern = new RegExp('%(date\{.*\}|[^%^\{^\}^ ^"^ \'^=^;]+)%', 'g');
+Graph.prototype.placeholderPattern = new RegExp('%(date\{.*\}|[^%\{\}"\'=;]+)%', 'g');
 
 /**
  * Specifies the regular expression for matching placeholders.
@@ -5524,7 +5524,26 @@ Graph.prototype.replacePlaceholders = function(cell, str, vars, translate)
 					
 					if (tmp == null)
 					{
-						tmp = this.getGlobalVariable(name);
+						if ((name.substring(0, 9) == 'pagecount' && name.length > 9) ||
+							name.substring(0, 10) == 'pagenumber' && name.length > 10)
+						{
+							var matches = name.match(/(pagecount|pagenumber)[\s]*([+-])[\s]*(\d+)/);
+
+							if (matches != null)
+							{
+								tmp = this.getGlobalVariable(matches[1]);
+
+								if (matches.length > 3)
+								{
+									var num = parseInt(matches[3]);
+									tmp += ((matches[2] == '+') ? num : -num);
+								}
+							}
+						}
+						else
+						{
+							tmp = this.getGlobalVariable(name);
+						}
 					}
 					
 					if (tmp == null && vars != null)

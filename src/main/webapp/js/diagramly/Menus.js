@@ -138,10 +138,29 @@
 			typeof mxMermaidToDrawio !== 'undefined' &&
 			window.isMermaidEnabled)
 		{
-			editorUi.actions.put('generate', new Action('generate' + '...', function()
+			var generateAction = editorUi.actions.put('generate', new Action('generate', function()
 			{
-				editorUi.openTemplateDialog('');
-			})).isEnabled = isGraphEnabled;
+				if (editorUi.chatWindow != null)
+				{
+					editorUi.chatWindow.window.setVisible(!editorUi.chatWindow.window.isVisible());
+				}
+				else
+				{
+					editorUi.openGenerateDialog('');
+				}
+			}));
+
+			generateAction.isEnabled = function()
+			{
+				return isGraphEnabled();
+			};
+
+			generateAction.setToggleAction(true);
+
+			generateAction.setSelectedCallback(function()
+			{
+				return editorUi.chatWindow != null && editorUi.chatWindow.window.isVisible();
+			});
 		}
 
 		editorUi.actions.put('insertTemplate', new Action('template' + '...', function()
@@ -490,8 +509,9 @@
 				
 				if (state != null && state.shape != null && state.shape.stencil != null)
 				{
-			    	var dlg = new EditShapeDialog(editorUi, cell, mxResources.get('editShape') + ':', 630, 400);
-					editorUi.showDialog(dlg.container, 640, 480, true, false);
+			    	var dlg = new EditShapeDialog(editorUi, cell, mxResources.get('editShape'));
+					editorUi.showDialog(dlg.container, 640, 480, true, false,
+						null, null, null, new mxRectangle(0, 0, 300, 200));
 					dlg.init();
 				}
 			}
@@ -900,32 +920,22 @@
 		action.setToggleAction(true);
 		action.setSelectedCallback(mxUtils.bind(this, function() { return this.tagsWindow != null && this.tagsWindow.window.isVisible(); }));
 
-		if (Editor.gptApiKey != null && Editor.gptModel != null && Editor.gptUrl != null &&
+		if (Editor.gptApiKey != null && Editor.gptModels != null && Editor.gptUrl != null &&
 			!editorUi.isOffline() && !EditorUi.isElectronApp)
 		{
-			action = editorUi.actions.addAction('chatWindowTitle', mxUtils.bind(this, function()
+			action = editorUi.actions.addAction('generate', mxUtils.bind(this, function()
 			{
-				if (this.chatWindow == null)
+				if (editorUi.chatWindow == null)
 				{
-					this.chatWindow = new ChatWindow(editorUi, 220, document.body.offsetHeight - 380, 250, 320);
-					this.chatWindow.window.addListener('show', mxUtils.bind(this, function()
-					{
-						editorUi.fireEvent(new mxEventObject('chat'));
-					}));
-					this.chatWindow.window.addListener('hide', function()
-					{
-						editorUi.fireEvent(new mxEventObject('chat'));
-					});
-					this.chatWindow.window.setVisible(true);
-					editorUi.fireEvent(new mxEventObject('chat'));
+					editorUi.openGenerateDialog();
 				}
 				else
 				{
-					this.chatWindow.window.setVisible(!this.chatWindow.window.isVisible());
+					editorUi.chatWindow.window.setVisible(!editorUi.chatWindow.window.isVisible());
 				}
 			}));
 			action.setToggleAction(true);
-			action.setSelectedCallback(mxUtils.bind(this, function() { return this.chatWindow != null && this.chatWindow.window.isVisible(); }));
+			action.setSelectedCallback(mxUtils.bind(this, function() { return editorUi.chatWindow != null && editorUi.chatWindow.window.isVisible(); }));
 		}
 
 		action = editorUi.actions.addAction('findReplace', mxUtils.bind(this, function(arg1, evt)
@@ -2304,11 +2314,13 @@
 		{
 			if (graph.isEnabled())
 			{
-				var cell = new mxCell('', new mxGeometry(0, 0, 120, 120), editorUi.defaultCustomShapeStyle);
+				var cell = new mxCell('', new mxGeometry(0, 0, 120, 120),
+					editorUi.defaultCustomShapeStyle);
 				cell.vertex = true;
-			
-		    	var dlg = new EditShapeDialog(editorUi, cell, mxResources.get('editShape') + ':', 630, 400);
-				editorUi.showDialog(dlg.container, 640, 480, true, false);
+				
+				var dlg = new EditShapeDialog(editorUi, cell, mxResources.get('editShape'));
+				editorUi.showDialog(dlg.container, 640, 480, true, false,
+					null, null, null, new mxRectangle(0, 0, 300, 200));
 				dlg.init();
 			}
 		})).isEnabled = isGraphEnabled;
@@ -4169,8 +4181,9 @@
 		{
 			this.addMenuItems(menu, ['undo', 'redo', '-', 'cut', 'copy', 'copyAsImage', 'copyAsSvg', 'paste',
 				'delete', '-', 'duplicate', '-', 'findReplace', '-', 'editData', 'editTooltip', '-',
-				'editStyle',  'editGeometry', '-', 'edit', '-', 'editLink', 'openLink', '-',
-                'selectVertices', 'selectEdges', 'selectAll', 'selectNone', '-', 'lockUnlock']);
+				'editStyle',  'editGeometry', 'editConnectionPoints', '-', 'edit', '-',
+				'editLink', 'openLink', '-', 'selectVertices', 'selectEdges', 'selectAll', 'selectNone', '-',
+				'lockUnlock']);
 		})));
 
 		var action = editorUi.actions.addAction('comments', mxUtils.bind(this, function()
@@ -4224,7 +4237,7 @@
 		{
 			var file = editorUi.getCurrentFile();
 			editorUi.menus.addMenuItems(menu, ['toggleShapes', 'format', 'ruler', '-',
-				'findReplace', 'layers', 'tags', 'chatWindowTitle', 'outline', '-'], parent);
+				'findReplace', 'layers', 'tags', 'outline', 'generate', '-'], parent);
 
 			if (editorUi.commentsSupported())
 			{
@@ -4265,7 +4278,7 @@
 				}
 				
 				editorUi.menus.addMenuItems(menu, ['-', 'findReplace',
-					'layers', 'tags', 'chatWindowTitle', 'outline', '-'], parent);
+					'layers', 'tags', 'outline', 'generate', '-'], parent);
 				
 				if (editorUi.commentsSupported())
 				{
@@ -4281,7 +4294,7 @@
 			}
 			else
 			{
-				this.addMenuItems(menu, (['format', 'outline', 'layers', 'tags', 'chatWindowTitle']).
+				this.addMenuItems(menu, (['format', 'outline', 'layers', 'tags', 'generate']).
 					concat((editorUi.commentsSupported()) ?
 					['comments', '-'] : ['-']));
 				
@@ -4736,7 +4749,7 @@
 				if (Editor.currentTheme == 'min')
 				{
 					editorUi.menus.addMenuItems(menu, ['toggleShapes', 'format',
-						'layers', 'tags', 'chatWindowTitle', '-',
+						'layers', 'tags', 'generate', '-',
 						'findReplace'], parent);
 			
 					if (editorUi.commentsSupported())
@@ -4769,7 +4782,7 @@
 				}
 
 				editorUi.menus.addMenuItems(menu, ['toggleShapes', 'format',
-					'layers', 'tags', 'chatWindowTitle', '-'], parent);	
+					'layers', 'tags', 'generate', '-'], parent);
 				editorUi.menus.addMenuItems(menu, ['pageSetup'], parent);
 			}
 			else if (Editor.currentTheme != 'min')
